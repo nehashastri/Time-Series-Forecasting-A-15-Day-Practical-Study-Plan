@@ -20,6 +20,10 @@ This model uses its own past values to predict the future. An AR(p) model means 
 
 - **PACF (Partial Autocorrelation Function)**: This is a bit smarter. It tells you how much a specific lag (say, 3 days ago) influences today’s value after removing the effects of the previous lags (1 and 2 days ago). You use PACF to decide how many lags to include in your AR model. For example, if the PACF spikes at lag 1 but then drops off, an AR(1) model might be enough.
 
+<img width="1189" height="490" alt="image" src="https://github.com/user-attachments/assets/5a62cba6-2d30-465e-8915-9d3d6d799c06" />
+Here p = 1 (maybe 2), q = 1
+
+
 ---
 
 ### MA (Moving Average) Model
@@ -80,6 +84,29 @@ Many software (like **pmdarima’s `auto_arima`**) can automatically select p, d
 > Both of them check:
 > - How well the model fits the data (lower error is better)
 > - Model complexity (more parameters = more risk of overfitting)
+
+```python
+from pmdarima import auto_arima
+
+# auto_arima needs a 1D series
+stepwise_model = auto_arima(automotive_ts,
+                             start_p=1, start_q=1,
+                             max_p=2, max_q=2,
+                             d=1,           # let it test for d
+                             start_P=0, seasonal=True,
+                             D=None,           # seasonal differencing
+                             max_P=2, max_Q=2,
+                             m=12,              # seasonality period (12 = monthly)
+                             trace=True,
+                             error_action='ignore',
+                             suppress_warnings=True,
+                             stepwise=True)
+
+# Summary of the model
+print(stepwise_model.summary())
+```
+
+
 
 ---
 
