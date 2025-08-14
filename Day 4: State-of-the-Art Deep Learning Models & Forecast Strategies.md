@@ -16,6 +16,14 @@ In plain RNNs (which are rarely used now due to limitations), at each time step,
 
 **LSTM (Long Short-Term Memory)** and **GRU (Gated Recurrent Unit)** are improved RNN architectures that address the issues of standard RNNs (like vanishing/exploding gradients) by using gating mechanisms. These gates allow the network to learn what to keep in memory and what to forget over long sequences.  
 
+> If you have many related time series (e.g., sales for 300 products, or readings from 50 sensors), **instead of building 300 separate models (one per series)** like in traditional forecasting, you can train **one deep learning model** on *all* the data at once.
+> - The model might take the **series ID** (or other identifiers) as an input feature, so it knows which series a given data point belongs to.
+> - Because it’s trained on all series together, it can **“share knowledge”** between them — for example, if weekends tend to have higher values across *many* products, the model can learn that general “weekend effect” and apply it to any series that shows similar behavior.
+
+> **Traditional Model:** separate model for each series (or complicated hierarchical setups).  
+> **Deep learning Model:** single “global” model that automatically learns patterns common across series.
+
+
 In practice, LSTMs/GRUs can capture long-term dependencies far better than naive RNNs. For example, an LSTM can, in theory, learn a seasonal pattern 100 steps long by retaining information in its cell state.  
 
 **Why RNN-type models are natural for time series**:  
@@ -91,3 +99,56 @@ Bai, S., Kolter, J. Z., & Koltun, V. (2018).
 "An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling" – Proposed TCN and showed it often outperforms LSTMs in benchmarks.
 
 ---
+
+### **Transformers for Time Series**
+
+Transformers revolutionized NLP by using **self-attention mechanisms** to handle long-range dependencies without recurrence. Recently, they’ve been adapted to time series. Transformers can look at an entire sequence and learn what time steps to pay attention to for forecasting.  
+
+However, native transformers have some issues for time series (like **quadratic complexity** with sequence length, and they’re **data-hungry**). But specialized variants have been developed: examples include **Informer**, **Autoformer**, **Temporal Fusion Transformer (TFT)**, **PatchTST**, etc., each addressing certain challenges (like reducing complexity or incorporating inductive biases for time).  
+
+These models are on the cutting edge (papers in 2020–2023). They excel particularly in **long-range forecasting** and **multivariate series** where the relationships between different series and time steps can be complex.  
+
+- **TFT (by Google)** is designed for **interpretable multivariate forecasting** – it uses attention to figure out which predictors are important at which times.  
+- **Informer** introduces a mechanism to sparsify attention for long series to be efficient.  
+- **PatchTST (2023)** breaks a time series into patches (like image patches) and applies transformers to capture very long-term patterns effectively (it’s one of the current state-of-the-art for long-horizon forecasting).  
+
+These models often outperform classical approaches on very long forecast horizons or very complex multivariate data. However, they require a lot of **data** and **computational power** to train (and tune). They’re more commonly seen in research and large-scale applications (forecasting hundreds of thousands of series, or very high-frequency data, etc.).  
+
+> **Use case – Long-range forecasting:** Research has shown models like **PatchTST** outperform classical methods significantly for horizons like 96 steps ahead on certain benchmarks (electricity, traffic, weather data).
+
+---
+
+### **Other Deep Learning Models**
+
+#### **N-BEATS / N-HiTS**  
+These are neural architectures specifically crafted for **univariate forecasting** that had great success in competitions.  
+
+- **N-BEATS (2019)** uses backward and forward residual stacks to learn trend and seasonality bases implicitly and has matched or beaten statistical methods on M4 competition data.  
+- **N-HiTS (2022)** is an improved version using **hierarchical interpolation**.  
+> Hierarchical Interpolation is like looking at your data at different zoom levels.
+
+> Imagine you have daily sales data. There are short-term patterns (like day-to-day changes) and long-term patterns (like weekly or monthly trends).
+> - Step 1 – Coarse view: You first look at the data in a coarser way, like weekly averages or monthly totals. This helps capture the big trends.
+> - Step 2 – Fine view: You also keep the original daily data to capture small, day-to-day variations.
+> - Step 3 – Combine: You make predictions at both levels. Then you “stretch” the coarse predictions back to daily values and add them together with the fine predictions (step 2).
+
+These are less general-purpose than transformers but highly effective for pure time-series forecasting tasks.  
+
+**Example – Long-range forecasting:**  
+Forecasting traffic for the next 6 months at hourly granularity – deep models like transformers or N-BEATS can potentially pick up seasonal patterns at multiple scales (daily, weekly, yearly) automatically.
+
+---
+
+#### **Autoencoder-based / CNN–LSTM hybrids**  
+Some approaches use **1D CNNs** to extract features and then **LSTM** to forecast, or use **autoencoders** to learn latent representations of multiple time series and then predict. 
+> An autoencoder is a type of neural network used for unsupervised learning, mainly for dimensionality reduction or feature learning.
+
+> Intuition:
+> - Encoder: Compresses input data into a smaller representation (latent space). Think of it as summarizing the key information.
+> - Latent space: The “compressed” version of your data. This captures the most important features.
+> Decoder: Reconstructs the input from this compressed representation.
+
+---
+
+#### **Graph Neural Networks for Time Series**  
+For forecasting many related series (like sensor networks, or traffic in roads), sometimes **graph neural nets** are used to capture relationships among series.
