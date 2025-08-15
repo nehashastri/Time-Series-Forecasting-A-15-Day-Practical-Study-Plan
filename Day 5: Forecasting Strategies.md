@@ -73,6 +73,7 @@ Some software (like **EViews** or **Stata**) have explicit *static* vs *dynamic*
 ## Rolling Forecasts vs Expanding Window
 
 This concept is about how you use data when forecasting over time (especially in backtesting or model updating):
+> Backtesting in time series forecasting is a method of evaluating a model's performance by applying it to historical data, simulating how it would have performed in the past.
 
 ### **Rolling (moving) window forecast:**  
   You keep a fixed-size training window that moves forward through time. For example, you always use the last 3 years of data to forecast next month, then move ahead one month (dropping the oldest month, adding the new). This ensures roughly consistent amount of training data and can adapt to changes (because very old data drops out). It’s useful if the process is non-stationary or if you suspect only recent data is relevant (maybe due to concept drift).
