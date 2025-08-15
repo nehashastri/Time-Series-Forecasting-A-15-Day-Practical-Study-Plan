@@ -152,3 +152,37 @@ Some approaches use **1D CNNs** to extract features and then **LSTM** to forecas
 
 #### **Graph Neural Networks for Time Series**  
 For forecasting many related series (like sensor networks, or traffic in roads), sometimes **graph neural nets** are used to capture relationships among series.
+
+---
+
+Some frameworks like Nixtla’s NeuralForecast provide implementations of these advanced models (N-BEATS, TFT, PatchTST, etc.) that you can use off-the-shelf. For instance, Nixtla’s library has a TimeSeriesTransformer which essentially is an implementation of a transformer for forecasting, and they provide pre-trained models as well for certain datasets.
+
+---
+## Pros of using DL Models:
+- Can model very complex relationships and long-term dependencies.
+- Can incorporate multiple inputs/outputs seamlessly (e.g. forecasting multiple steps ahead as a sequence output, rather than needing recursive prediction).
+- With modern libraries, relatively easy to experiment (e.g. using PyTorch or TensorFlow).
+- Some architectures (like TFT) provide interpretability (which features were attended to) which is useful in multivariate settings.
+- If you have millions of data points, a neural network can potentially discover subtle patterns that would be very hard to manually encode. 
+
+## Cons of using DL Models:
+- Require a lot of data and computational power. Overfitting is a risk if data is limited (regularization, early stopping needed).
+- Harder to interpret than simple models (though techniques like SHAP for deep networks, attention weights, etc., can help).
+- They may not always outperform simpler models on small data or short horizons. In fact, research has found that for very short-term forecasts or when data is scarce, classical or ML models can be as good or better. Deep learning shines for scale (lots of series or long horizons).
+- Longer development cycle: need to tune network architecture, hyperparameters (learning rate, layers, etc.). Tools like NeuralProphet (a hybrid of Prophet and neural nets) or GluonTS can ease this by providing pre-built models.
+
+## Example with a modern library:
+Using Darts (a Python library for time series):
+
+```python
+from darts.models import TFTModel
+
+model = TFTModel(input_chunk_length=36, output_chunk_length=12, hidden_size=32, lstm_layers=2)
+model.fit(series_train, future_covariates=covariate_series)
+pred = model.predict(n=12, series=series_train)
+```
+This trains a Temporal Fusion Transformer on a window of past 36 points to predict the next 12, possibly using some future covariates (like known future weather). Darts, NeuralForecast, GluonTS all provide high-level interfaces to advanced models.
+
+---
+In summary, deep learning models are powerful tools for time series, especially as data scales up in size and complexity. They’re being actively researched – for instance, Meta (Facebook) recently released a paper on a model called TimeSeriesGPT (a foundation model for time series), and Salesforce has one called TimeSeriesFusion. These trends indicate that large-scale pre-trained models for time series might become a thing (similar to NLP’s GPT). For now, in practice, if you have a typical business forecasting problem with a moderate dataset, a simpler model might suffice, but it’s good to be aware of DL models for when you hit those complex scenarios. They particularly shine for long horizon forecasts, high-dimensional data, and when you want a single model to handle many series or tasks.
+
