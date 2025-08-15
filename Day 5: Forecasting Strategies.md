@@ -3,7 +3,7 @@
 The “forecasting horizon” means how far ahead you are forecasting – e.g. one step (tomorrow) vs multiple steps (next 12 months). Different strategies are used for one-step vs multi-step forecasting:
 
 ### One-step (recursive) forecasting
-You predict the next time step only. This is simpler – your model directly outputs $ \hat{y}_{t+1}$ given data up to $t$. Many models (like ARIMA by default) produce one-step forecasts.  
+You predict the next time step only. This is simpler – your model directly outputs $\hat{y}_{t+1}$ given data up to $t$. Many models (like ARIMA by default) produce one-step forecasts.  
 If you need multiple steps ahead, you feed forecasts back in recursively: i.e., predict $t+1$, then treat that as an observed value and predict $t+2$, and so on. This is called **recursive multi-step forecasting**.
 
 **Advantages:**
