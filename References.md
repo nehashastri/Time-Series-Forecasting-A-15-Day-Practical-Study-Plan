@@ -96,7 +96,7 @@
 - Time Series Forecasting: ARIMA/VARIMA vs Machine Learning ...  
   https://stats.stackexchange.com/questions/487970/time-series-forecasting-arima-varima-vs-machine-learning-deep-learning
 
-- StatsForecast ⚡️ - Nixtla - Nixtlaverse  
+- StatsForecast - Nixtla - Nixtlaverse  
   https://nixtlaverse.nixtla.io/statsforecast/index.html
 
 - Announcing TimeGEN-1 in Azure AI: Leap Forward in Time Series ...  
